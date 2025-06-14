@@ -1,780 +1,745 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>全屏时间</title>
-    <meta
-      name="keywords"
-      content="全屏时间，在线时钟，极简时钟，当前时间，实时显示，大字时钟，全屏时钟，极简计时器"
-    />
-    <meta
-      name="description"
-      content="一个简约的在线全屏时间，实时显示当前时间，完美适配大屏和桌面使用。同时，它也是一个渐进式 Web 应用 (PWA)，支持离线使用和添加到主屏幕。"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@200..900&display=swap"
-      rel="stylesheet"
-    />
-    <meta name="google" content="notranslate" />
 
-    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png" />
-    <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
-    <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#222222" />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>全屏时间</title>
+  <meta name="keywords" content="全屏时间，在线时钟，极简时钟，当前时间，实时显示，大字时钟，全屏时钟，极简计时器" />
+  <meta name="description" content="一个简约的在线全屏时间，实时显示当前时间，完美适配大屏和桌面使用。同时，它也是一个渐进式 Web 应用 (PWA)，支持离线使用和添加到主屏幕。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@200..900&display=swap" rel="stylesheet" />
+  <meta name="google" content="notranslate" />
 
-    <style>
-      :root {
-        --background-color: #222;
-        --text-color: #fff;
-        --drawer-bg-color: rgba(0, 0, 0, 0.85);
-        --button-bg-color: #333;
-        --button-text-color: #fff;
-        --button-hover-bg-color: #555;
-        --time-date-gap: 20px;
-      }
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png" />
+  <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#222222" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3NSRLZ92FD"></script>
+  <style>
+    :root {
+      --background-color: #222;
+      --text-color: #fff;
+      --drawer-bg-color: rgba(0, 0, 0, 0.85);
+      --button-bg-color: #333;
+      --button-text-color: #fff;
+      --button-hover-bg-color: #555;
+      --time-date-gap: 20px;
+    }
 
-      body {
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: var(--background-color);
-        color: var(--text-color);
-        overflow: hidden;
-        transition: background-color 0.3s ease, color 0.3s ease;
-      }
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-      .hidden-h1 {
-        position: absolute;
-        left: -9999px;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-      }
+    .hidden-h1 {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
 
-      .clock {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
-        transition: transform 0.1s ease;
-      }
+    .clock {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
 
-      #timeDisplay {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-family: "Source Sans 3", sans-serif;
-        font-weight: 700;
-        font-size: var(--clock-time-size, 15vw);
-        line-height: 1;
-        transition: font-family 0.3s ease, font-weight 0.3s ease,
-          font-size 0.3s ease;
-        white-space: nowrap;
-      }
+    #timeDisplay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: "Source Sans 3", sans-serif;
+      font-weight: 700;
+      font-size: var(--clock-time-size, 15vw);
+      line-height: 1;
+      transition: font-family 0.3s ease, font-weight 0.3s ease,
+        font-size 0.3s ease;
+      white-space: nowrap;
+    }
 
-      #dateDisplay {
-        position: absolute;
-        left: 50%;
-        top: calc(50% + (var(--clock-time-size, 15vw) / 2) + var(--time-date-gap));
-        transform: translateX(-50%);
-        font-family: sans-serif;
-        font-weight: 400;
-        font-size: clamp(1rem, 3vw, 2.5rem);
-        opacity: 0.8;
-        white-space: nowrap;
-        transition: font-family 0.3s ease, font-weight 0.3s ease;
-      }
+    #dateDisplay {
+      position: absolute;
+      left: 50%;
+      top: calc(50% + (var(--clock-time-size, 15vw) / 2) + var(--time-date-gap));
+      transform: translateX(-50%);
+      font-family: sans-serif;
+      font-weight: 400;
+      font-size: clamp(1rem, 3vw, 2.5rem);
+      opacity: 0.8;
+      white-space: nowrap;
+      transition: font-family 0.3s ease, font-weight 0.3s ease;
+    }
 
-      .hint {
-        position: absolute;
-        top: 10%;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: rgba(0, 0, 0, 0.7);
-        color: #fff;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-family: sans-serif;
-        font-size: 0.9em;
-        opacity: 1;
-        transition: opacity 1s ease-out;
-        z-index: 10;
-        white-space: nowrap;
-      }
+    .hint {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-family: sans-serif;
+      font-size: 0.9em;
+      opacity: 1;
+      transition: opacity 1s ease-out;
+      z-index: 10;
+      white-space: nowrap;
+    }
 
-      .hint.hide {
-        opacity: 0;
-        pointer-events: none;
-      }
+    .hint.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-      .drawer-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 998;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease-in-out;
-      }
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease-in-out;
+    }
 
-      .drawer-overlay.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -450px;
+      width: 430px;
+      height: 100%;
+      background-color: var(--drawer-bg-color);
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+      transition: right 0.3s ease-in-out;
+      z-index: 999;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: stretch;
+    }
+
+    .drawer.open {
+      right: 0;
+    }
+
+    @media (max-width: 768px) {
       .drawer {
-        position: fixed;
-        top: 0;
-        right: -450px;
-        width: 430px;
-        height: 100%;
-        background-color: var(--drawer-bg-color);
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-        transition: right 0.3s ease-in-out;
-        z-index: 999;
-        padding: 20px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: stretch;
+        width: 90vw;
+        right: -90vw;
       }
 
       .drawer.open {
         right: 0;
       }
+    }
 
-      @media (max-width: 768px) {
-        .drawer {
-          width: 90vw;
-          right: -90vw;
-        }
+    .drawer-content {
+      flex-grow: 1;
+      padding-bottom: 20px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
 
-        .drawer.open {
-          right: 0;
-        }
-      }
+    .drawer-section {
+      margin-bottom: 20px;
+    }
 
-      .drawer-content {
-        flex-grow: 1;
-        padding-bottom: 20px;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-      }
+    .drawer-section h3 {
+      color: #eee;
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-family: sans-serif;
+      font-size: 1.1em;
+      display: flex;
+      align-items: center;
+    }
 
-      .drawer-section {
-        margin-bottom: 20px;
-      }
+    .drawer button {
+      border: none;
+      text-align: center;
+      padding: 10px 15px;
+      text-decoration: none;
+      display: inline-block;
+      cursor: pointer;
+      border-radius: 4px;
+      background-color: var(--button-bg-color);
+      color: var(--button-text-color);
+      font-size: 1em;
+      transition: background-color 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-      .drawer-section h3 {
-        color: #eee;
-        margin-top: 0;
-        margin-bottom: 10px;
-        font-family: sans-serif;
-        font-size: 1.1em;
-        display: flex;
-        align-items: center;
-      }
+    .drawer button:hover {
+      background-color: var(--button-hover-bg-color);
+    }
 
-      .drawer button {
-        border: none;
-        text-align: center;
-        padding: 10px 15px;
-        text-decoration: none;
-        display: inline-block;
-        cursor: pointer;
-        border-radius: 4px;
-        background-color: var(--button-bg-color);
-        color: var(--button-text-color);
-        font-size: 1em;
-        transition: background-color 0.2s ease;
-        width: 100%;
-        box-sizing: border-box;
-      }
+    .drawer button:active {
+      background-color: #666;
+    }
 
-      .drawer button:hover {
-        background-color: var(--button-hover-bg-color);
-      }
+    .drawer button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
 
-      .drawer button:active {
-        background-color: #666;
-      }
+    .color-theme-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-      .drawer button:disabled {
-        background-color: #555;
-        cursor: not-allowed;
-        opacity: 0.7;
-      }
+    .color-theme-options button {
+      flex-grow: 1;
+      flex-basis: calc(50% - 5px);
+      min-width: 100px;
+      width: auto;
+    }
 
-      .color-theme-options {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
+    .display-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-      .color-theme-options button {
-        flex-grow: 1;
-        flex-basis: calc(50% - 5px);
-        min-width: 100px;
-        width: auto;
-      }
+    .display-options button {
+      flex-grow: 1;
+      flex-basis: calc(50% - 5px);
+      min-width: 100px;
+      width: auto;
+    }
 
-      .display-options {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
+    .drawer-footer {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-      .display-options button {
-        flex-grow: 1;
-        flex-basis: calc(50% - 5px);
-        min-width: 100px;
-        width: auto;
-      }
+    .drawer-footer button {
+      flex: 1;
+      max-width: 120px;
+      width: auto;
+    }
 
-      .drawer-footer {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-      }
+    .drawer-section>button {
+      display: block;
+    }
 
-      .drawer-footer button {
-        flex: 1;
-        max-width: 120px;
-        width: auto;
-      }
+    .info-hint {
+      font-size: 0.85em;
+      color: #bbb;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      line-height: 1.4;
+    }
 
-      .drawer-section > button {
-        display: block;
-      }
+    .info-hint.hide {
+      display: none;
+    }
+  </style>
+</head>
 
-      .info-hint {
-        font-size: 0.85em;
-        color: #bbb;
-        margin-top: 10px;
-        padding: 10px;
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-        line-height: 1.4;
-      }
+<body>
+  <h1 class="hidden-h1">全屏时间 - 当前时间</h1>
+  <div id="hint" class="hint">点击时间可打开设置</div>
+  <main class="clock" id="clockWrapper">
+    <div id="timeDisplay"></div>
+    <div id="dateDisplay"></div>
+  </main>
+  <div id="drawerOverlay" class="drawer-overlay"></div>
 
-      .info-hint.hide {
-        display: none;
-      }
-    </style>
-  </head>
-
-  <body>
-    <h1 class="hidden-h1">全屏时间 - 当前时间</h1>
-    <div id="hint" class="hint">点击时间可打开设置</div>
-    <main class="clock" id="clockWrapper">
-      <div id="timeDisplay"></div>
-      <div id="dateDisplay"></div>
-    </main>
-    <div id="drawerOverlay" class="drawer-overlay"></div>
-
-    <aside id="drawer" class="drawer">
-      <div class="drawer-content">
-        <div class="drawer-section">
-          <h3>屏幕烧屏提示</h3>
-          <div class="info-hint">
-            长时间在固定位置显示静态图像可能会导致屏幕烧屏。本时钟已集成像素点移动功能，以减少烧屏风险。但请注意，此功能不能保证完全避免，特别是在OLED屏幕上。建议您定期关闭或更换屏幕显示内容。
-          </div>
+  <aside id="drawer" class="drawer">
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <h3>屏幕烧屏提示</h3>
+        <div class="info-hint">
+          长时间在固定位置显示静态图像可能会导致屏幕烧屏。本时钟已集成像素点移动功能，以减少烧屏风险。但请注意，此功能不能保证完全避免，特别是在OLED屏幕上。建议您定期关闭或更换屏幕显示内容。
         </div>
+      </div>
 
-        <div class="drawer-section">
-          <h3>选择主题</h3>
-          <div id="colorThemeOptions" class="color-theme-options"></div>
-        </div>
+      <div class="drawer-section">
+        <h3>选择主题</h3>
+        <div id="colorThemeOptions" class="color-theme-options"></div>
+      </div>
 
-        <div class="drawer-section">
-          <h3>显示设置</h3>
-          <div class="display-options">
-            <button id="showSecondBtn" onclick="toggleSeconds()">隐藏秒</button>
-            <button id="showDateBtn" onclick="toggleDate()">显示日期</button>
-            <button id="fullscreenBtn" onclick="toggleFullscreen()">
-              全屏显示
-            </button>
-          </div>
-        </div>
-
-        <div class="drawer-section">
-          <h3>字体设置</h3>
-          <div class="display-options">
-            <button id="decreaseFontBtn">减小字号</button>
-            <button id="increaseFontBtn">增大字号</button>
-            <button id="fontSwitchBtn" onclick="cycleFont()">
-              切换字体: Source Sans 3
-            </button>
-          </div>
-        </div>
-
-        <div class="drawer-section">
-          <h3>屏幕常亮</h3>
-          <button id="wakeLockBtn" onclick="toggleWakeLock()">
-            启用屏幕常亮
+      <div class="drawer-section">
+        <h3>显示设置</h3>
+        <div class="display-options">
+          <button id="showSecondBtn" onclick="toggleSeconds()">隐藏秒</button>
+          <button id="showDateBtn" onclick="toggleDate()">显示日期</button>
+          <button id="fullscreenBtn" onclick="toggleFullscreen()">
+            全屏显示
           </button>
-          <div id="wakeLockHint" class="info-hint hide">
-            屏幕常亮功能依赖于浏览器和操作系统支持，在某些情况下（如：进入全屏模式、浏览器标签页被切换到后台、系统省电模式、长时间不活跃等）可能会自动失效。请确保授予网站相应的权限。
-          </div>
         </div>
       </div>
 
-      <div class="drawer-footer">
-        <button class="reset-button" onclick="resetSettings()">重置</button>
-        <button class="close-button" onclick="toggleDrawer()">关闭</button>
+      <div class="drawer-section">
+        <h3>字体设置</h3>
+        <div class="display-options">
+          <button id="decreaseFontBtn">减小字号</button>
+          <button id="increaseFontBtn">增大字号</button>
+          <button id="fontSwitchBtn" onclick="cycleFont()">
+            切换字体: Source Sans 3
+          </button>
+        </div>
       </div>
-    </aside>
 
-    <script>
-      const initialShowSeconds = true;
-      const initialShowDate = false;
-      const initialFontIndex = 0;
-      const initialColorThemeIndex = 0;
-      const initialWakeLock = false;
+      <div class="drawer-section">
+        <h3>屏幕常亮</h3>
+        <button id="wakeLockBtn" onclick="toggleWakeLock()">
+          启用屏幕常亮
+        </button>
+        <div id="wakeLockHint" class="info-hint hide">
+          屏幕常亮功能依赖于浏览器和操作系统支持，在某些情况下（如：进入全屏模式、浏览器标签页被切换到后台、系统省电模式、长时间不活跃等）可能会自动失效。请确保授予网站相应的权限。
+        </div>
+      </div>
+    </div>
 
-      const defaultDesktopTimeVw = 15;
-      const defaultMobileTimeVw = 10;
-      const minTimeVw = 5;
-      const maxTimeVw = 25;
-      const timeVwStep = 0.5;
+    <div class="drawer-footer">
+      <button class="reset-button" onclick="resetSettings()">重置</button>
+      <button class="close-button" onclick="toggleDrawer()">关闭</button>
+    </div>
+  </aside>
 
-      const STORAGE_KEY_SECONDS = "clockShowSeconds";
-      const STORAGE_KEY_DATE = "clockShowDate";
-      const STORAGE_KEY_FONT_INDEX = "clockFontIndex";
-      const STORAGE_KEY_COLOR_THEME_INDEX = "clockColorThemeIndex";
-      const STORAGE_KEY_WAKELOCK = "clockWakeLockActive";
-      const STORAGE_KEY_FONT_SIZE = "clockFontSizeRem";
+  <script>
+    const initialShowSeconds = true;
+    const initialShowDate = false;
+    const initialFontIndex = 0;
+    const initialColorThemeIndex = 0;
+    const initialWakeLock = false;
 
-      let showSeconds;
-      let showDate;
-      let drawerOpen = false;
-      let currentFontIndex;
-      let currentColorThemeIndex;
-      let currentFontVwValue;
-      let wakeLockSupported = "wakeLock" in navigator;
-      let wakeLockSentinel = null;
-      let isWakeLockActive;
+    const defaultDesktopTimeVw = 15;
+    const defaultMobileTimeVw = 10;
+    const minTimeVw = 5;
+    const maxTimeVw = 25;
+    const timeVwStep = 0.5;
 
-      let burnInPreventionInterval;
-      const burnInPreventionDelay = 60000;
-      const burnInMaxOffset = 5;
+    const STORAGE_KEY_SECONDS = "clockShowSeconds";
+    const STORAGE_KEY_DATE = "clockShowDate";
+    const STORAGE_KEY_FONT_INDEX = "clockFontIndex";
+    const STORAGE_KEY_COLOR_THEME_INDEX = "clockColorThemeIndex";
+    const STORAGE_KEY_WAKELOCK = "clockWakeLockActive";
+    const STORAGE_KEY_FONT_SIZE = "clockFontSizeRem";
 
-      const fontConfigs = [
-        {
-          name: "Source Sans 3",
-          family: '"Source Sans 3", sans-serif',
-          weight: 700,
-          url: "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@200..900&display=swap",
-        },
-        {
-          name: "Signika",
-          family: '"Signika", sans-serif',
-          weight: 700,
-          url: "https://fonts.googleapis.com/css2?family=Signika:wght@300..700&display=swap",
-        },
-      ];
-      const loadedFontUrls = new Set();
+    let showSeconds;
+    let showDate;
+    let drawerOpen = false;
+    let currentFontIndex;
+    let currentColorThemeIndex;
+    let currentFontVwValue;
+    let wakeLockSupported = "wakeLock" in navigator;
+    let wakeLockSentinel = null;
+    let isWakeLockActive;
 
-      const colorThemes = [
-        { name: "经典黑白", bg: "#222", text: "#fff" },
-        { name: "经典白黑", bg: "#fff", text: "#222" },
-        { name: "绿光数字", bg: "#000", text: "#0f0" },
-        { name: "深蓝之夜", bg: "#1a1a2e", text: "#e0e0e0" },
-        { name: "纸张日出", bg: "#fdf6e3", text: "#586e75" },
-        { name: "柔和夜间", bg: "#000", text: "#555" },
-      ];
+    let burnInPreventionInterval;
+    const burnInPreventionDelay = 60000;
+    const burnInMaxOffset = 5;
 
-      const clockWrapperElement = document.getElementById("clockWrapper");
-      const timeDisplayElement = document.getElementById("timeDisplay");
-      const dateDisplayElement = document.getElementById("dateDisplay");
-      const drawerElement = document.getElementById("drawer");
-      const drawerOverlayElement = document.getElementById("drawerOverlay");
-      const showSecondBtn = document.getElementById("showSecondBtn");
-      const showDateBtn = document.getElementById("showDateBtn");
-      const fontSwitchBtn = document.getElementById("fontSwitchBtn");
-      const decreaseFontBtn = document.getElementById("decreaseFontBtn");
-      const increaseFontBtn = document.getElementById("increaseFontBtn");
-      const hintElement = document.getElementById("hint");
-      const colorThemeOptionsContainer =
-        document.getElementById("colorThemeOptions");
-      const wakeLockBtn = document.getElementById("wakeLockBtn");
-      const wakeLockHintDiv = document.getElementById("wakeLockHint");
-      const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const fontConfigs = [
+      {
+        name: "Source Sans 3",
+        family: '"Source Sans 3", sans-serif',
+        weight: 700,
+        url: "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@200..900&display=swap",
+      },
+      {
+        name: "Signika",
+        family: '"Signika", sans-serif',
+        weight: 700,
+        url: "https://fonts.googleapis.com/css2?family=Signika:wght@300..700&display=swap",
+      },
+    ];
+    const loadedFontUrls = new Set();
 
-      function saveSettings() {
-        localStorage.setItem(STORAGE_KEY_SECONDS, showSeconds);
-        localStorage.setItem(STORAGE_KEY_DATE, showDate);
-        localStorage.setItem(STORAGE_KEY_FONT_INDEX, currentFontIndex);
-        localStorage.setItem(
-          STORAGE_KEY_COLOR_THEME_INDEX,
-          currentColorThemeIndex
-        );
-        localStorage.setItem(STORAGE_KEY_WAKELOCK, isWakeLockActive);
-        localStorage.setItem(STORAGE_KEY_FONT_SIZE, currentFontVwValue);
+    const colorThemes = [
+      { name: "经典黑白", bg: "#222", text: "#fff" },
+      { name: "经典白黑", bg: "#fff", text: "#222" },
+      { name: "绿光数字", bg: "#000", text: "#0f0" },
+      { name: "深蓝之夜", bg: "#1a1a2e", text: "#e0e0e0" },
+      { name: "纸张日出", bg: "#fdf6e3", text: "#586e75" },
+      { name: "柔和夜间", bg: "#000", text: "#555" },
+    ];
+
+    const clockWrapperElement = document.getElementById("clockWrapper");
+    const timeDisplayElement = document.getElementById("timeDisplay");
+    const dateDisplayElement = document.getElementById("dateDisplay");
+    const drawerElement = document.getElementById("drawer");
+    const drawerOverlayElement = document.getElementById("drawerOverlay");
+    const showSecondBtn = document.getElementById("showSecondBtn");
+    const showDateBtn = document.getElementById("showDateBtn");
+    const fontSwitchBtn = document.getElementById("fontSwitchBtn");
+    const decreaseFontBtn = document.getElementById("decreaseFontBtn");
+    const increaseFontBtn = document.getElementById("increaseFontBtn");
+    const hintElement = document.getElementById("hint");
+    const colorThemeOptionsContainer =
+      document.getElementById("colorThemeOptions");
+    const wakeLockBtn = document.getElementById("wakeLockBtn");
+    const wakeLockHintDiv = document.getElementById("wakeLockHint");
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+    function saveSettings() {
+      localStorage.setItem(STORAGE_KEY_SECONDS, showSeconds);
+      localStorage.setItem(STORAGE_KEY_DATE, showDate);
+      localStorage.setItem(STORAGE_KEY_FONT_INDEX, currentFontIndex);
+      localStorage.setItem(
+        STORAGE_KEY_COLOR_THEME_INDEX,
+        currentColorThemeIndex
+      );
+      localStorage.setItem(STORAGE_KEY_WAKELOCK, isWakeLockActive);
+      localStorage.setItem(STORAGE_KEY_FONT_SIZE, currentFontVwValue);
+    }
+
+    function loadSettings() {
+      const storedSeconds = localStorage.getItem(STORAGE_KEY_SECONDS);
+      const storedDate = localStorage.getItem(STORAGE_KEY_DATE);
+      const storedFontIndex = localStorage.getItem(STORAGE_KEY_FONT_INDEX);
+      const storedColorThemeIndex = localStorage.getItem(
+        STORAGE_KEY_COLOR_THEME_INDEX
+      );
+      const storedWakeLock = localStorage.getItem(STORAGE_KEY_WAKELOCK);
+      const storedFontSize = localStorage.getItem(STORAGE_KEY_FONT_SIZE);
+
+      showSeconds =
+        storedSeconds !== null
+          ? storedSeconds === "true"
+          : initialShowSeconds;
+      showDate =
+        storedDate !== null ? storedDate === "true" : initialShowDate;
+
+      currentFontIndex =
+        storedFontIndex !== null
+          ? parseInt(storedFontIndex, 10)
+          : initialFontIndex;
+      if (
+        isNaN(currentFontIndex) ||
+        currentFontIndex < 0 ||
+        currentFontIndex >= fontConfigs.length
+      ) {
+        currentFontIndex = initialFontIndex;
       }
 
-      function loadSettings() {
-        const storedSeconds = localStorage.getItem(STORAGE_KEY_SECONDS);
-        const storedDate = localStorage.getItem(STORAGE_KEY_DATE);
-        const storedFontIndex = localStorage.getItem(STORAGE_KEY_FONT_INDEX);
-        const storedColorThemeIndex = localStorage.getItem(
-          STORAGE_KEY_COLOR_THEME_INDEX
-        );
-        const storedWakeLock = localStorage.getItem(STORAGE_KEY_WAKELOCK);
-        const storedFontSize = localStorage.getItem(STORAGE_KEY_FONT_SIZE);
+      currentColorThemeIndex =
+        storedColorThemeIndex !== null
+          ? parseInt(storedColorThemeIndex, 10)
+          : initialColorThemeIndex;
+      isWakeLockActive =
+        storedWakeLock !== null ? storedWakeLock === "true" : initialWakeLock;
 
-        showSeconds =
-          storedSeconds !== null
-            ? storedSeconds === "true"
-            : initialShowSeconds;
-        showDate =
-          storedDate !== null ? storedDate === "true" : initialShowDate;
+      const initialVw =
+        window.innerWidth <= 768 ? defaultMobileTimeVw : defaultDesktopTimeVw;
+      currentFontVwValue =
+        storedFontSize !== null ? parseFloat(storedFontSize) : initialVw;
 
-        currentFontIndex =
-          storedFontIndex !== null
-            ? parseInt(storedFontIndex, 10)
-            : initialFontIndex;
-        if (
-          isNaN(currentFontIndex) ||
-          currentFontIndex < 0 ||
-          currentFontIndex >= fontConfigs.length
-        ) {
-          currentFontIndex = initialFontIndex;
-        }
+      if (
+        isNaN(currentFontVwValue) ||
+        currentFontVwValue < minTimeVw ||
+        currentFontVwValue > maxTimeVw
+      ) {
+        currentFontVwValue = initialVw;
+      }
+    }
 
-        currentColorThemeIndex =
-          storedColorThemeIndex !== null
-            ? parseInt(storedColorThemeIndex, 10)
-            : initialColorThemeIndex;
-        isWakeLockActive =
-          storedWakeLock !== null ? storedWakeLock === "true" : initialWakeLock;
+    function updateClock() {
+      var now = new Date();
+      var hours = now.getHours().toString().padStart(2, "0");
+      var minutes = now.getMinutes().toString().padStart(2, "0");
+      var seconds = now.getSeconds().toString().padStart(2, "0");
+      var timeString = hours + ":" + minutes;
 
-        const initialVw =
-          window.innerWidth <= 768 ? defaultMobileTimeVw : defaultDesktopTimeVw;
-        currentFontVwValue =
-          storedFontSize !== null ? parseFloat(storedFontSize) : initialVw;
+      if (showSeconds) {
+        timeString += ":" + seconds;
+      }
+      timeDisplayElement.textContent = timeString;
 
-        if (
-          isNaN(currentFontVwValue) ||
-          currentFontVwValue < minTimeVw ||
-          currentFontVwValue > maxTimeVw
-        ) {
-          currentFontVwValue = initialVw;
-        }
+      if (showDate) {
+        var year = now.getFullYear();
+        var month = (now.getMonth() + 1).toString();
+        var day = now.getDate().toString();
+        var weekDays = [
+          "星期日",
+          "星期一",
+          "星期二",
+          "星期三",
+          "星期四",
+          "星期五",
+          "星期六",
+        ];
+        var dayOfWeek = weekDays[now.getDay()];
+        var dateString = `${year}年${month}月${day}日 ${dayOfWeek}`;
+        dateDisplayElement.textContent = dateString;
+        dateDisplayElement.style.display = "";
+      } else {
+        dateDisplayElement.textContent = "";
+        dateDisplayElement.style.display = "none";
       }
 
-      function updateClock() {
-        var now = new Date();
-        var hours = now.getHours().toString().padStart(2, "0");
-        var minutes = now.getMinutes().toString().padStart(2, "0");
-        var seconds = now.getSeconds().toString().padStart(2, "0");
-        var timeString = hours + ":" + minutes;
+      document.title = timeString + " - 全屏时间";
 
-        if (showSeconds) {
-          timeString += ":" + seconds;
-        }
-        timeDisplayElement.textContent = timeString;
+      const ms = now.getMilliseconds();
+      const delay = 1000 - ms;
+      setTimeout(updateClock, delay);
+    }
 
-        if (showDate) {
-          var year = now.getFullYear();
-          var month = (now.getMonth() + 1).toString();
-          var day = now.getDate().toString();
-          var weekDays = [
-            "星期日",
-            "星期一",
-            "星期二",
-            "星期三",
-            "星期四",
-            "星期五",
-            "星期六",
-          ];
-          var dayOfWeek = weekDays[now.getDay()];
-          var dateString = `${year}年${month}月${day}日 ${dayOfWeek}`;
-          dateDisplayElement.textContent = dateString;
-          dateDisplayElement.style.display = '';
-        } else {
-          dateDisplayElement.textContent = "";
-          dateDisplayElement.style.display = 'none';
-        }
-
-        document.title = timeString + " - 全屏时间";
-
-        const ms = now.getMilliseconds();
-        const delay = 1000 - ms;
-        setTimeout(updateClock, delay);
+    function toggleDrawer() {
+      drawerOpen = !drawerOpen;
+      if (drawerOpen) {
+        drawerElement.classList.add("open");
+        drawerOverlayElement.classList.add("active");
+      } else {
+        drawerElement.classList.remove("open");
+        drawerOverlayElement.classList.remove("active");
       }
+    }
 
-      function toggleDrawer() {
-        drawerOpen = !drawerOpen;
-        if (drawerOpen) {
-          drawerElement.classList.add("open");
-          drawerOverlayElement.classList.add("active");
-        } else {
-          drawerElement.classList.remove("open");
-          drawerOverlayElement.classList.remove("active");
-        }
-      }
+    clockWrapperElement.addEventListener("click", function () {
+      toggleDrawer();
+    });
 
-      clockWrapperElement.addEventListener("click", function () {
+    drawerOverlayElement.addEventListener("click", function () {
+      if (drawerOpen) {
         toggleDrawer();
-      });
+      }
+    });
 
-      drawerOverlayElement.addEventListener("click", function () {
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && drawerOpen) {
+        toggleDrawer();
+      }
+    });
+
+    function toggleSeconds() {
+      showSeconds = !showSeconds;
+      showSecondBtn.textContent = showSeconds ? "隐藏秒" : "显示秒";
+      saveSettings();
+      updateClock();
+    }
+
+    function toggleDate() {
+      showDate = !showDate;
+      showDateBtn.textContent = showDate ? "隐藏日期" : "显示日期";
+      saveSettings();
+      updateClock();
+    }
+
+    function loadFont(fontConfig) {
+      if (!loadedFontUrls.has(fontConfig.url)) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = fontConfig.url;
+        document.head.appendChild(link);
+        loadedFontUrls.add(fontConfig.url);
+      }
+    }
+
+    function applyFont(index) {
+      if (index < 0 || index >= fontConfigs.length) {
+        index = initialFontIndex;
+      }
+      const config = fontConfigs[index];
+      loadFont(config);
+      timeDisplayElement.style.fontFamily = config.family;
+      fontSwitchBtn.textContent = "切换字体: " + config.name;
+      currentFontIndex = index;
+      saveSettings();
+    }
+
+    function cycleFont() {
+      let nextIndex = (currentFontIndex + 1) % fontConfigs.length;
+      applyFont(nextIndex);
+    }
+
+    function applyFontSize() {
+      document.documentElement.style.setProperty(
+        "--clock-time-size",
+        `${currentFontVwValue}vw`
+      );
+    }
+
+    function adjustFontSize(delta) {
+      currentFontVwValue = Math.max(
+        minTimeVw,
+        Math.min(maxTimeVw, currentFontVwValue + delta * timeVwStep)
+      );
+      applyFontSize();
+      saveSettings();
+    }
+
+    decreaseFontBtn.addEventListener("click", () => adjustFontSize(-1));
+    increaseFontBtn.addEventListener("click", () => adjustFontSize(1));
+
+    function applyColorTheme(index) {
+      const theme = colorThemes[index];
+      document.documentElement.style.setProperty(
+        "--background-color",
+        theme.bg
+      );
+      document.documentElement.style.setProperty("--text-color", theme.text);
+      currentColorThemeIndex = index;
+      saveSettings();
+    }
+
+    function populateColorThemes() {
+      colorThemeOptionsContainer.innerHTML = "";
+      colorThemes.forEach((theme, index) => {
+        const button = document.createElement("button");
+        button.textContent = theme.name;
+        button.onclick = () => applyColorTheme(index);
+        colorThemeOptionsContainer.appendChild(button);
+      });
+    }
+
+    function updateWakeLockUI() {
+      if (!wakeLockSupported) {
+        wakeLockBtn.textContent = "不支持常亮";
+        wakeLockBtn.disabled = true;
+      } else {
+        wakeLockBtn.textContent = isWakeLockActive
+          ? "禁用屏幕常亮"
+          : "启用屏幕常亮";
+        wakeLockBtn.disabled = false;
+      }
+      wakeLockHintDiv.classList.toggle("hide", !isWakeLockActive);
+    }
+
+    async function requestWakeLock() {
+      if (!wakeLockSupported) return;
+      if (wakeLockSentinel) return;
+
+      try {
+        wakeLockSentinel = await navigator.wakeLock.request("screen");
+        wakeLockSentinel.addEventListener("release", () => {
+          isWakeLockActive = false;
+          wakeLockSentinel = null;
+          updateWakeLockUI();
+          saveSettings();
+        });
+        isWakeLockActive = true;
+      } catch (err) {
+        isWakeLockActive = false;
+        wakeLockSentinel = null;
+      }
+      updateWakeLockUI();
+      saveSettings();
+    }
+
+    function releaseWakeLock() {
+      if (wakeLockSentinel) {
+        wakeLockSentinel.release();
+        wakeLockSentinel = null;
+        isWakeLockActive = false;
+      }
+      updateWakeLockUI();
+      saveSettings();
+    }
+
+    function toggleWakeLock() {
+      if (isWakeLockActive) {
+        releaseWakeLock();
+      } else {
+        requestWakeLock();
+      }
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (
+        wakeLockSentinel !== null &&
+        document.visibilityState === "visible"
+      ) {
+        if (isWakeLockActive) {
+          requestWakeLock();
+        }
+      }
+    });
+
+    function startBurnInPrevention() {
+      if (burnInPreventionInterval) {
+        clearInterval(burnInPreventionInterval);
+      }
+
+      burnInPreventionInterval = setInterval(() => {
+        const xOffset = (Math.random() * 2 - 1) * burnInMaxOffset;
+        const yOffset = (Math.random() * 2 - 1) * burnInMaxOffset;
+        clockWrapperElement.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+      }, burnInPreventionDelay);
+    }
+
+    function updateFullscreenUI() {
+      if (document.fullscreenElement) {
+        fullscreenBtn.textContent = "退出全屏";
+      } else {
+        fullscreenBtn.textContent = "全屏显示";
+      }
+    }
+
+    async function toggleFullscreen() {
+      if (!document.fullscreenElement) {
         if (drawerOpen) {
           toggleDrawer();
         }
-      });
-
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape" && drawerOpen) {
-          toggleDrawer();
-        }
-      });
-
-      function toggleSeconds() {
-        showSeconds = !showSeconds;
-        showSecondBtn.textContent = showSeconds ? "隐藏秒" : "显示秒";
-        saveSettings();
-        updateClock();
-      }
-
-      function toggleDate() {
-        showDate = !showDate;
-        showDateBtn.textContent = showDate ? "隐藏日期" : "显示日期";
-        saveSettings();
-        updateClock();
-      }
-
-      function loadFont(fontConfig) {
-        if (!loadedFontUrls.has(fontConfig.url)) {
-          const link = document.createElement("link");
-          link.rel = "stylesheet";
-          link.href = fontConfig.url;
-          document.head.appendChild(link);
-          loadedFontUrls.add(fontConfig.url);
-        }
-      }
-
-      function applyFont(index) {
-        if (index < 0 || index >= fontConfigs.length) {
-          index = initialFontIndex;
-        }
-        const config = fontConfigs[index];
-        loadFont(config);
-        timeDisplayElement.style.fontFamily = config.family;
-        fontSwitchBtn.textContent = "切换字体: " + config.name;
-        currentFontIndex = index;
-        saveSettings();
-      }
-
-      function cycleFont() {
-        let nextIndex = (currentFontIndex + 1) % fontConfigs.length;
-        applyFont(nextIndex);
-      }
-
-      function applyFontSize() {
-        document.documentElement.style.setProperty(
-          "--clock-time-size",
-          `${currentFontVwValue}vw`
-        );
-      }
-
-      function adjustFontSize(delta) {
-        currentFontVwValue = Math.max(
-          minTimeVw,
-          Math.min(maxTimeVw, currentFontVwValue + delta * timeVwStep)
-        );
-        applyFontSize();
-        saveSettings();
-      }
-
-      decreaseFontBtn.addEventListener("click", () => adjustFontSize(-1));
-      increaseFontBtn.addEventListener("click", () => adjustFontSize(1));
-
-      function applyColorTheme(index) {
-        const theme = colorThemes[index];
-        document.documentElement.style.setProperty(
-          "--background-color",
-          theme.bg
-        );
-        document.documentElement.style.setProperty("--text-color", theme.text);
-        currentColorThemeIndex = index;
-        saveSettings();
-      }
-
-      function populateColorThemes() {
-        colorThemeOptionsContainer.innerHTML = "";
-        colorThemes.forEach((theme, index) => {
-          const button = document.createElement("button");
-          button.textContent = theme.name;
-          button.onclick = () => applyColorTheme(index);
-          colorThemeOptionsContainer.appendChild(button);
-        });
-      }
-
-      function updateWakeLockUI() {
-        if (!wakeLockSupported) {
-          wakeLockBtn.textContent = "不支持常亮";
-          wakeLockBtn.disabled = true;
-        } else {
-          wakeLockBtn.textContent = isWakeLockActive
-            ? "禁用屏幕常亮"
-            : "启用屏幕常亮";
-          wakeLockBtn.disabled = false;
-        }
-        wakeLockHintDiv.classList.toggle("hide", !isWakeLockActive);
-      }
-
-      async function requestWakeLock() {
-        if (!wakeLockSupported) return;
-        if (wakeLockSentinel) return;
-
         try {
-          wakeLockSentinel = await navigator.wakeLock.request("screen");
-          wakeLockSentinel.addEventListener("release", () => {
-            isWakeLockActive = false;
-            wakeLockSentinel = null;
-            updateWakeLockUI();
-            saveSettings();
-          });
-          isWakeLockActive = true;
-        } catch (err) {
-          isWakeLockActive = false;
-          wakeLockSentinel = null;
+          await document.documentElement.requestFullscreen();
+        } catch (error) {
+          console.error("Error attempting to go fullscreen:", error);
+          alert(
+            "无法进入全屏模式。浏览器可能阻止了此操作，或者您的设备不支持全屏功能。"
+          );
         }
-        updateWakeLockUI();
-        saveSettings();
-      }
-
-      function releaseWakeLock() {
-        if (wakeLockSentinel) {
-          wakeLockSentinel.release();
-          wakeLockSentinel = null;
-          isWakeLockActive = false;
-        }
-        updateWakeLockUI();
-        saveSettings();
-      }
-
-      function toggleWakeLock() {
-        if (isWakeLockActive) {
-          releaseWakeLock();
-        } else {
-          requestWakeLock();
-        }
-      }
-
-      document.addEventListener("visibilitychange", () => {
-        if (
-          wakeLockSentinel !== null &&
-          document.visibilityState === "visible"
-        ) {
-          if (isWakeLockActive) {
-            requestWakeLock();
-          }
-        }
-      });
-
-      function startBurnInPrevention() {
-        if (burnInPreventionInterval) {
-          clearInterval(burnInPreventionInterval);
-        }
-
-        burnInPreventionInterval = setInterval(() => {
-          const xOffset = (Math.random() * 2 - 1) * burnInMaxOffset;
-          const yOffset = (Math.random() * 2 - 1) * burnInMaxOffset;
-          clockWrapperElement.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-        }, burnInPreventionDelay);
-      }
-
-      function updateFullscreenUI() {
-        if (document.fullscreenElement) {
-          fullscreenBtn.textContent = "退出全屏";
-        } else {
-          fullscreenBtn.textContent = "全屏显示";
-        }
-      }
-
-      async function toggleFullscreen() {
-        if (!document.fullscreenElement) {
-          if (drawerOpen) {
-            toggleDrawer();
-          }
-          try {
-            await document.documentElement.requestFullscreen();
-          } catch (error) {
-            console.error("Error attempting to go fullscreen:", error);
-            alert(
-              "无法进入全屏模式。浏览器可能阻止了此操作，或者您的设备不支持全屏功能。"
-            );
-          }
-        } else {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          }
-        }
-      }
-
-      document.addEventListener("fullscreenchange", updateFullscreenUI);
-
-      function resetSettings() {
-        showSeconds = initialShowSeconds;
-        showSecondBtn.textContent = showSeconds ? "隐藏秒" : "显示秒";
-
-        showDate = initialShowDate;
-        showDateBtn.textContent = showDate ? "隐藏日期" : "显示日期";
-
-        applyFont(initialFontIndex);
-
-        currentFontVwValue =
-          window.innerWidth <= 768 ? defaultMobileTimeVw : defaultDesktopTimeVw;
-        applyFontSize();
-
-        applyColorTheme(initialColorThemeIndex);
-
-        isWakeLockActive = initialWakeLock;
-        if (isWakeLockActive) {
-          requestWakeLock();
-        } else {
-          releaseWakeLock();
-        }
-        updateWakeLockUI();
-
-        if (document.fullscreenElement) {
+      } else {
+        if (document.exitFullscreen) {
           document.exitFullscreen();
         }
-        updateFullscreenUI();
-
-        clockWrapperElement.style.transform = "translate(0px, 0px)";
-        startBurnInPrevention();
-
-        saveSettings();
-        updateClock();
       }
+    }
 
-      loadSettings();
+    document.addEventListener("fullscreenchange", updateFullscreenUI);
 
+    function resetSettings() {
+      showSeconds = initialShowSeconds;
       showSecondBtn.textContent = showSeconds ? "隐藏秒" : "显示秒";
-      showDateBtn.textContent = showDate ? "隐藏日期" : "显示日期";
-      applyFont(currentFontIndex);
-      applyFontSize();
-      applyColorTheme(currentColorThemeIndex);
 
+      showDate = initialShowDate;
+      showDateBtn.textContent = showDate ? "隐藏日期" : "显示日期";
+
+      applyFont(initialFontIndex);
+
+      currentFontVwValue =
+        window.innerWidth <= 768 ? defaultMobileTimeVw : defaultDesktopTimeVw;
+      applyFontSize();
+
+      applyColorTheme(initialColorThemeIndex);
+
+      isWakeLockActive = initialWakeLock;
       if (isWakeLockActive) {
         requestWakeLock();
       } else {
@@ -782,27 +747,66 @@
       }
       updateWakeLockUI();
 
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
       updateFullscreenUI();
 
-      populateColorThemes();
-      updateClock();
+      clockWrapperElement.style.transform = "translate(0px, 0px)";
       startBurnInPrevention();
 
-      setTimeout(() => {
-        hintElement.classList.add("hide");
-      }, 3000);
+      saveSettings();
+      updateClock();
+    }
 
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-              console.log('Service Worker registered with scope:', registration.scope);
-            })
-            .catch(error => {
-              console.log('Service Worker registration failed:', error);
-            });
-        });
-      }
-    </script>
-  </body>
+    loadSettings();
+
+    showSecondBtn.textContent = showSeconds ? "隐藏秒" : "显示秒";
+    showDateBtn.textContent = showDate ? "隐藏日期" : "显示日期";
+    applyFont(currentFontIndex);
+    applyFontSize();
+    applyColorTheme(currentColorThemeIndex);
+
+    if (isWakeLockActive) {
+      requestWakeLock();
+    } else {
+      releaseWakeLock();
+    }
+    updateWakeLockUI();
+
+    updateFullscreenUI();
+
+    populateColorThemes();
+    updateClock();
+    startBurnInPrevention();
+
+    setTimeout(() => {
+      hintElement.classList.add("hide");
+    }, 3000);
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            console.log(
+              "Service Worker registered with scope:",
+              registration.scope
+            );
+          })
+          .catch((error) => {
+            console.log("Service Worker registration failed:", error);
+          });
+      });
+    }
+  </script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-3NSRLZ92FD');
+  </script>
+</body>
+
 </html>
