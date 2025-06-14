@@ -18,7 +18,7 @@
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#222222" />
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3NSRLZ92FD"></script>
+
   <style>
     :root {
       --background-color: #222;
@@ -268,6 +268,14 @@
       display: none;
     }
   </style>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3NSRLZ92FD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-3NSRLZ92FD');
+  </script>
 </head>
 
 <body>
@@ -799,13 +807,6 @@
           });
       });
     }
-  </script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-3NSRLZ92FD');
   </script>
 </body>
 
