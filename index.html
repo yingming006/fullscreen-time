@@ -314,7 +314,7 @@
           <button id="showSecondBtn" onclick="toggleSeconds()">隐藏秒</button>
           <button id="showDateBtn" onclick="toggleDate()">显示日期</button>
           <button id="fullscreenBtn" onclick="toggleFullscreen()">
-            全屏显示
+            全屏显示（F11）
           </button>
         </div>
       </div>
@@ -422,6 +422,11 @@
     const wakeLockBtn = document.getElementById("wakeLockBtn");
     const wakeLockHintDiv = document.getElementById("wakeLockHint");
     const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+    let longPressTimer;
+    let fontSizeInterval;
+    const longPressDelay = 300;
+    const fontSizeChangeInterval = 80;
 
     function saveSettings() {
       localStorage.setItem(STORAGE_KEY_SECONDS, showSeconds);
@@ -610,8 +615,72 @@
       saveSettings();
     }
 
-    decreaseFontBtn.addEventListener("click", () => adjustFontSize(-1));
-    increaseFontBtn.addEventListener("click", () => adjustFontSize(1));
+    function startContinuousFontSizeChange(delta) {
+      adjustFontSize(delta);
+      fontSizeInterval = setInterval(() => {
+        adjustFontSize(delta);
+      }, fontSizeChangeInterval);
+    }
+
+    function stopContinuousFontSizeChange() {
+      clearTimeout(longPressTimer);
+      clearInterval(fontSizeInterval);
+      longPressTimer = null;
+      fontSizeInterval = null;
+    }
+
+    function setupButtonLongPress(button, delta) {
+      let isLongPress = false;
+
+      button.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        stopContinuousFontSizeChange();
+        isLongPress = false;
+        longPressTimer = setTimeout(() => {
+          isLongPress = true;
+          startContinuousFontSizeChange(delta);
+        }, longPressDelay);
+      });
+
+      button.addEventListener("mouseup", () => {
+        if (!isLongPress && longPressTimer) {
+          stopContinuousFontSizeChange();
+          adjustFontSize(delta);
+        } else {
+          stopContinuousFontSizeChange();
+        }
+      });
+
+      button.addEventListener("mouseleave", () => {
+        stopContinuousFontSizeChange();
+      });
+
+      button.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        stopContinuousFontSizeChange();
+        isLongPress = false;
+        longPressTimer = setTimeout(() => {
+          isLongPress = true;
+          startContinuousFontSizeChange(delta);
+        }, longPressDelay);
+      }, { passive: false });
+
+      button.addEventListener("touchend", () => {
+        if (!isLongPress && longPressTimer) {
+          stopContinuousFontSizeChange();
+          adjustFontSize(delta);
+        } else {
+          stopContinuousFontSizeChange();
+        }
+      });
+
+      button.addEventListener("touchcancel", () => {
+        stopContinuousFontSizeChange();
+      });
+    }
+
+    setupButtonLongPress(decreaseFontBtn, -1);
+    setupButtonLongPress(increaseFontBtn, 1);
 
     function applyColorTheme(index) {
       const theme = colorThemes[index];
@@ -711,9 +780,9 @@
 
     function updateFullscreenUI() {
       if (document.fullscreenElement) {
-        fullscreenBtn.textContent = "退出全屏";
+        fullscreenBtn.textContent = "退出全屏（F11）";
       } else {
-        fullscreenBtn.textContent = "全屏显示";
+        fullscreenBtn.textContent = "全屏显示（F11）";
       }
     }
 
